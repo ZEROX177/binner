@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Konverter Teks & Binary</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #6E48AA 0%, #9D50BB 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+            padding: 40px;
+            width: 100%;
+            max-width: 900px;
+            position: relative;
+            overflow: hidden;
+            margin: 0 auto;
+            flex: 1;
+        }
+
+        .container::before {
+            content: "";
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(45deg, #6E48AA, #9D50BB);
+            border-radius: 50%;
+            opacity: 0.1;
+        }
+
+        .container::after {
+            content: "";
+            position: absolute;
+            bottom: -80px;
+            left: -80px;
+            width: 250px;
+            height: 250px;
+            background: linear-gradient(45deg, #9D50BB, #6E48AA);
+            border-radius: 50%;
+            opacity: 0.1;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 2;
+        }
+
+        h1 {
+            color: #6E48AA;
+            font-size: 36px;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: relative;
+            display: inline-block;
+        }
+
+        h1::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(to right, #6E48AA, #9D50BB);
+            border-radius: 2px;
+        }
+
+        .subtitle {
+            color: #777;
+            font-size: 16px;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .converter {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 2;
+        }
+
+        @media (max-width: 768px) {
+            .converter {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .input-area {
+            text-align: center;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(110, 72, 170, 0.1);
+        }
+
+        .input-area:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .input-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #6E48AA, #9D50BB);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 20px;
+            box-shadow: 0 4px 8px rgba(110, 72, 170, 0.3);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 15px;
+            color: #555;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            resize: vertical;
+            min-height: 150px;
+            margin: 10px 0;
+            transition: all 0.3s;
+            background: white;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #9D50BB;
+            box-shadow: 0 0 0 3px rgba(157, 80, 187, 0.2);
+        }
+
+        textarea::placeholder {
+            color: #aaa;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(135deg, #6E48AA 0%, #9D50BB 100%);
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(110, 72, 170, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(110, 72, 170, 0.6);
+        }
+
+        button:active {
+            transform: translateY(0);
+            box-shadow: 0 3px 10px rgba(110, 72, 170, 0.4);
+        }
+
+        .result {
+            position: relative;
+            z-index: 2;
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(110, 72, 170, 0.1);
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .result-header h2 {
+            color: #6E48AA;
+            font-size: 22px;
+        }
+
+        .copy-btn {
+            background: linear-gradient(135deg, #4A69BD 0%, #1E3799 100%);
+            padding: 10px 20px;
+            border-radius: 50px;
+            color: white;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .copy-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(74, 105, 189, 0.4);
+        }
+
+        .error {
+            color: #e74c3c;
+            text-align: center;
+            margin-top: 15px;
+            font-weight: 500;
+            background: rgba(231, 76, 60, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .info {
+            text-align: center;
+            margin-top: 25px;
+            color: #777;
+            font-size: 14px;
+            font-style: italic;
+        }
+
+        .binary-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+            opacity: 0.03;
+            pointer-events: none;
+        }
+
+        .binary-digit {
+            position: absolute;
+            font-family: monospace;
+            font-size: 18px;
+            color: #6E48AA;
+            animation: float 20s linear infinite;
+        }
+
+        @keyframes float {
+            from {
+                transform: translateY(-100%);
+            }
+            to {
+                transform: translateY(100vh);
+            }
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+            padding: 15px;
+            width: 100%;
+        }
+
+        .footer a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .binary-example {
+            font-size: 12px;
+            color: #9D50BB;
+            margin-top: 5px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Background binary animation -->
+        <div class="binary-pattern" id="binary-pattern"></div>
+        
+        <div class="header">
+            <h1><i class="fas fa-exchange-alt"></i> Konverter Teks & Binary</h1>
+            <p class="subtitle">Alat praktis untuk mengonversi teks biasa ke kode binary dan sebaliknya. Cepat, akurat, dan mudah digunakan!</p>
+        </div>
+        
+        <div class="converter">
+            <div class="input-area">
+                <div class="input-header">
+                    <div class="icon">
+                        <i class="fas fa-font"></i>
+                    </div>
+                    <label for="text-input">Tulis Teks:</label>
+                </div>
+                <textarea id="text-input" placeholder="Masukkan teks untuk dikonversi ke binary... (Contoh: Hello World)"></textarea>
+                <div class="buttons">
+                    <button id="to-binary">
+                        <i class="fas fa-long-arrow-alt-right"></i> Konversi ke Binary
+                    </button>
+                </div>
+            </div>
+
+            <div class="input-area">
+                <div class="input-header">
+                    <div class="icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <label for="binary-input">Masukkan Binary:</label>
+                </div>
+                <textarea id="binary-input" placeholder="Masukkan binary untuk dikonversi ke teks... (Contoh: 01001000 01100101 01101100 01101100 01101111)"></textarea>
+                <p class="binary-example">* Gunakan spasi untuk memisahkan setiap 8 digit binary</p>
+                <div class="buttons">
+                    <button id="to-text">
+                        <i class="fas fa-long-arrow-alt-left"></i> Konversi ke Teks
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="result">
+            <div class="result-header">
+                <h2><i class="fas fa-clipboard-check"></i> Hasil Konversi:</h2>
+                <div id="copy-result" class="copy-btn">
+                    <i class="fas fa-copy"></i> Salin Hasil
+                </div>
+            </div>
+            <textarea id="result-text" readonly></textarea>
+            <div id="error-message" class="error"></div>
+        </div>
+        
+        <p class="info">
+            <i class="fas fa-info-circle"></i> Setiap karakter teks diwakili oleh 8 digit binary (1 byte). 
+            Konverter ini mendukung semua karakter UTF-8.
+        </p>
+    </div>
+
+    <div class="footer">
+        &copy; 2023 Konverter Teks & Binary | Dibuat dengan <i class="fas fa-heart" style="color:#e74c3c"></i> untuk kemudahan konversi
+    </div>
+
+    <script>
+        // Generate floating binary digits background
+        function createBinaryBackground() {
+            const container = document.getElementById('binary-pattern');
+            const digits = 80;
+            
+            for (let i = 0; i < digits; i++) {
+                const digit = document.createElement('div');
+                digit.className = 'binary-digit';
+                digit.textContent = Math.random() > 0.5 ? '1' : '0';
+                digit.style.left = `${Math.random() * 100}%`;
+                digit.style.animationDelay = `${Math.random() * 20}s`;
+                digit.style.fontSize = `${12 + Math.random() * 12}px`;
+                digit.style.opacity = 0.2 + Math.random() * 0.5;
+                container.appendChild(digit);
+            }
+        }
+        
+        // DOM elements
+        const toBinaryBtn = document.getElementById('to-binary');
+        const toTextBtn = document.getElementById('to-text');
+        const textInput = document.getElementById('text-input');
+        const binaryInput = document.getElementById('binary-input');
+        const resultText = document.getElementById('result-text');
+        const errorMessage = document.getElementById('error-message');
+        const copyBtn = document.getElementById('copy-result');
+
+        // Event listeners
+        toBinaryBtn.addEventListener('click', convertToBinary);
+        toTextBtn.addEventListener('click', convertToText);
+        copyBtn.addEventListener('click', copyResult);
+
+        // Initialize
+        createBinaryBackground();
+        
+        // Conversion functions
+        function convertToBinary() {
+            const text = textInput.value;
+            if (text.trim() === '') {
+                showError('Masukkan teks terlebih dahulu!');
+                return;
+            }
+            
+            let binary = '';
+            for (let i = 0; i < text.length; i++) {
+                binary += text.charCodeAt(i).toString(2).padStart(8, '0') + ' ';
+            }
+            resultText.value = binary.trim();
+            errorMessage.style.display = 'none';
+        }
+
+        function convertToText() {
+            const binary = binaryInput.value.replace(/\s+/g, '');
+            if (binary.trim() === '') {
+                showError('Masukkan binary terlebih dahulu!');
+                return;
+            }
+            
+            if (/^[01]+$/.test(binary)) {
+                // Check if binary length is multiple of 8
+                if (binary.length % 8 !== 0) {
+                    showError('Panjang digit binary harus kelipatan 8!');
+                    return;
+                }
+                
+                let text = '';
+                for (let i = 0; i < binary.length; i += 8) {
+                    const byte = binary.substr(i, 8);
+                    text += String.fromCharCode(parseInt(byte, 2));
+                }
+                resultText.value = text;
+                errorMessage.style.display = 'none';
+            } else {
+                showError('Input binary tidak valid! Hanya karakter 0 dan 1 yang diperbolehkan.');
+            }
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            resultText.value = '';
+            
+            // Hide error after 5 seconds
+            setTimeout(() => {
+                errorMessage.style.display = 'none';
+            }, 5000);
+        }
+
+        function copyResult() {
+            if (resultText.value.trim() === '') return;
+            
+            resultText.select();
+            document.execCommand('copy');
+            
+            // Show copied feedback
+            const originalText = copyBtn.innerHTML;
+            copyBtn.innerHTML = '<i class="fas fa-check"></i> Tersalin!';
+            
+            setTimeout(() => {
+                copyBtn.innerHTML = originalText;
+            }, 2000);
+        }
+        
+        // Example conversions for placeholders
+        textInput.addEventListener('focus', function() {
+            if (!this.value) this.placeholder = 'Contoh: Selamat datang di konverter!';
+        });
+        
+        textInput.addEventListener('blur', function() {
+            this.placeholder = 'Masukkan teks untuk dikonversi ke binary... (Contoh: Hello World)';
+        });
+        
+        binaryInput.addEventListener('focus', function() {
+            if (!this.value) this.placeholder = 'Contoh: 01010011 01100101 01101100 01100001 01101101 01100001 01110100';
+        });
+        
+        binaryInput.addEventListener('blur', function() {
+            this.placeholder = 'Masukkan binary untuk dikonversi ke teks... (Contoh: 01001000 01100101 01101100 01101100 01101111)';
+        });
+    </script>
+</body>
+</html>
